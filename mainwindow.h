@@ -40,6 +40,7 @@ private slots:
     void on_load_warning_sfx_button_clicked();
     void on_remove_all_warning_sfx_button_clicked();
     void on_remove_warning_sfx_button_clicked();
+    void on_repeat_warning_toggled(bool checked);
 public slots:
     void positionChanged(qint64);
 private:
@@ -49,6 +50,7 @@ private:
     int m_interval_s;
     int m_warning_time_s;
     bool m_warned;
+    bool m_repeat_warning;
     QElapsedTimer m_elapsed_timer;
     QMediaPlayer* m_player;
     QAudioOutput* m_audio_out;

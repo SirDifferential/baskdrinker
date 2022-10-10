@@ -53,6 +53,8 @@ MainWindow::MainWindow(QWidget *parent)
     m_audio_out->setVolume(vol / 100.0f);
 
     m_rand = QRandomGenerator::system();
+    m_repeat_warning = settings.value("repeat_warning", false).toBool();
+    ui->repeat_warning->setChecked(m_repeat_warning);
 }
 
 MainWindow::~MainWindow()
@@ -130,7 +132,6 @@ void MainWindow::nextPlayer() {
 void MainWindow::doWarning() {
 
     QStringList sfx_list = getWarningSFX();
-    qDebug() << sfx_list.count();
 
     if (sfx_list.count() > 0) {
         QString sfx = sfx_list[0];
@@ -143,6 +144,7 @@ void MainWindow::doWarning() {
 
         m_player->setSource(QUrl::fromLocalFile(sfx));
         m_player->play();
+        m_player->setLoops(0);
     }
 
     m_warned = true;
@@ -152,7 +154,7 @@ void MainWindow::on_timer_interval() {
     int64_t secs_since = m_elapsed_timer.nsecsElapsed() / 1000000000LL;
     int64_t t = m_interval_s - secs_since;
 
-    if (t <= m_warning_time_s && !m_warned && m_warning_time_s > 0) {
+    if (t <= m_warning_time_s && (!m_warned || m_repeat_warning) && m_warning_time_s > 0) {
         doWarning();
     }
 
@@ -317,5 +319,12 @@ void MainWindow::on_remove_warning_sfx_button_clicked()
     }
 
     persist_warning_sfx();
+}
+
+void MainWindow::on_repeat_warning_toggled(bool checked)
+{
+    m_repeat_warning = checked;
+    QSettings settings;
+    settings.setValue("repeat_warning", checked);
 }
 
