@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/images">
+        <file>bask-drinker.png</file>
+    </qresource>
+</RCC>
