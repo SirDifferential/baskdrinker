@@ -33,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent)
         }
     }
 
-    QStringList warning_sfx_list = settings.value("warning_sfx_list").toStringList();
+    QStringList warning_sfx_list = settings.value("warning_sfx_list", QStringList()).toStringList();
 
     for (auto& s : warning_sfx_list) {
         QFileInfo finfo(s);
@@ -43,18 +43,29 @@ MainWindow::MainWindow(QWidget *parent)
         }
     }
 
-    m_player = new QMediaPlayer();
-    m_audio_out = new QAudioOutput();
-    m_player->setAudioOutput(m_audio_out);
-    connect(m_player, SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
-    m_audio_out->setVolume(50);
-    int vol = settings.value("volume", 50).toInt();
-    ui->volume->setValue(vol);
-    m_audio_out->setVolume(vol / 100.0f);
+    m_player_switch = new QMediaPlayer();
+    m_player_warning = new QMediaPlayer();
+    m_audio_switch = new QAudioOutput();
+    m_audio_warning = new QAudioOutput();
+
+    m_player_switch->setAudioOutput(m_audio_switch);
+    m_player_warning->setAudioOutput(m_audio_warning);
+    connect(m_player_switch, SIGNAL(positionChanged(qint64)), this, SLOT(positionChangedSwitch(qint64)));
+    connect(m_player_warning, SIGNAL(positionChanged(qint64)), this, SLOT(positionChangedWarning(qint64)));
+
+    m_audio_switch->setVolume(m_volume_switch / 100.0f);
+    m_audio_warning->setVolume(m_volume_warning / 100.0f);
 
     m_rand = QRandomGenerator::system();
     m_repeat_warning = settings.value("repeat_warning", false).toBool();
+    m_player_warning->setLoops(m_repeat_warning ? QMediaPlayer::Infinite : 1);
+
     ui->repeat_warning->setChecked(m_repeat_warning);
+    m_volume_switch = settings.value("volume_switch", 50).toInt();
+    m_volume_warning =settings.value("volume_warning", 50).toInt();
+    ui->switch_volume->setValue(m_volume_switch);
+    ui->warning_volume->setValue(m_volume_warning);
+
 }
 
 MainWindow::~MainWindow()
@@ -62,7 +73,10 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::positionChanged(qint64 pos) {
+void MainWindow::positionChangedSwitch(qint64 pos) {
+}
+
+void MainWindow::positionChangedWarning(qint64 pos) {
 }
 
 void MainWindow::on_runbutton_clicked()
@@ -76,6 +90,9 @@ void MainWindow::on_runbutton_clicked()
         m_running = false;
         ui->runbutton->setText("START");
         m_timer->stop();
+        m_player_warning->stop();
+        m_player_switch->stop();
+        m_warned = false;
     }
 }
 
@@ -124,8 +141,8 @@ void MainWindow::nextPlayer() {
             sfx = sfx_list[v];
         }
 
-        m_player->setSource(QUrl::fromLocalFile(sfx));
-        m_player->play();
+        m_player_switch->setSource(QUrl::fromLocalFile(sfx));
+        m_player_switch->play();
     }
 }
 
@@ -138,13 +155,11 @@ void MainWindow::doWarning() {
 
         if (sfx_list.count() > 1) {
             quint32 v = m_rand->bounded(0, sfx_list.count());
-            qDebug() << "got: " << v;
             sfx = sfx_list[v];
         }
 
-        m_player->setSource(QUrl::fromLocalFile(sfx));
-        m_player->play();
-        m_player->setLoops(0);
+        m_player_warning->setSource(QUrl::fromLocalFile(sfx));
+        m_player_warning->play();
     }
 
     m_warned = true;
@@ -154,16 +169,31 @@ void MainWindow::on_timer_interval() {
     int64_t secs_since = m_elapsed_timer.nsecsElapsed() / 1000000000LL;
     int64_t t = m_interval_s - secs_since;
 
-    if (t <= m_warning_time_s && (!m_warned || m_repeat_warning) && m_warning_time_s > 0) {
-        doWarning();
+    bool soon = false;
+    if (t <= m_warning_time_s && m_warning_time_s > 0) {
+        soon = true;
+        if (!m_warned) {
+            doWarning();
+        }
     }
 
     if (t <= 0) {
+        m_player_warning->stop();
         nextPlayer();
         t = m_interval_s - secs_since;
     }
 
-    QString l = "Next turn in: " + sensibleUnits(t);
+    QString l;
+    if (soon) {
+        l += "<b>";
+    }
+
+    l += "Next turn in: " + sensibleUnits(t);
+
+    if (soon) {
+        l += "</b>";
+    }
+
     ui->timer_l->setText(l);
 }
 
@@ -176,6 +206,8 @@ void MainWindow::on_interval_valueChanged(int val)
 void MainWindow::on_warning_time_valueChanged(int val)
 {
     m_warning_time_s = val;
+    // Play warnings even if they have already played if we adjust the warning time
+    m_warned = false;
 }
 
 void MainWindow::on_load_switch_sfx_button_clicked()
@@ -252,13 +284,6 @@ void MainWindow::on_remove_all_switch_sfx_button_clicked()
     persist_switch_sfx();
 }
 
-void MainWindow::on_volume_valueChanged(int value)
-{
-    QSettings settings;
-    settings.setValue("volume", value);
-    m_audio_out->setVolume(value / 100.0f);
-}
-
 void MainWindow::on_load_warning_sfx_button_clicked()
 {
     QSettings settings;
@@ -273,7 +298,7 @@ void MainWindow::on_load_warning_sfx_button_clicked()
     d.setDirectory(p);
     QStringList files;
 
-    QStringList items = getSwitchSFX();
+    QStringList items = getWarningSFX();
 
     if (d.exec()) {
 
@@ -326,5 +351,20 @@ void MainWindow::on_repeat_warning_toggled(bool checked)
     m_repeat_warning = checked;
     QSettings settings;
     settings.setValue("repeat_warning", checked);
+    m_player_warning->setLoops(m_repeat_warning ? QMediaPlayer::Infinite : 1);
 }
 
+
+void MainWindow::on_switch_volume_valueChanged(int value)
+{
+    QSettings settings;
+    settings.setValue("volume_switch", value);
+    m_audio_switch->setVolume(value / 100.0f);
+}
+
+void MainWindow::on_warning_volume_valueChanged(int value)
+{
+    QSettings settings;
+    settings.setValue("volume_warning", value);
+    m_audio_warning->setVolume(value / 100.0f);
+}

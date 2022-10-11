@@ -28,13 +28,6 @@
       <layout class="QHBoxLayout" name="horizontalLayout_4">
        <item>
         <layout class="QGridLayout" name="control_layout">
-         <item row="2" column="1">
-          <widget class="QLabel" name="warning_time_l">
-           <property name="text">
-            <string>Early warning time (s) (0 = off)</string>
-           </property>
-          </widget>
-         </item>
          <item row="2" column="3">
           <widget class="QSpinBox" name="warning_time">
            <property name="maximum">
@@ -42,40 +35,17 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="4">
-          <spacer name="horizontalSpacer">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="1" column="3">
-          <widget class="QSpinBox" name="interval">
-           <property name="minimum">
-            <number>6</number>
-           </property>
-           <property name="maximum">
-            <number>100000</number>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="3">
-          <widget class="QLabel" name="timer_l">
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
-         </item>
          <item row="0" column="1">
           <widget class="QPushButton" name="runbutton">
            <property name="text">
             <string>START</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="8">
+          <widget class="QCheckBox" name="repeat_warning">
+           <property name="text">
+            <string>Repeat</string>
            </property>
           </widget>
          </item>
@@ -92,15 +62,32 @@
            </property>
           </spacer>
          </item>
-         <item row="1" column="1">
-          <widget class="QLabel" name="interval_l">
+         <item row="2" column="1">
+          <widget class="QLabel" name="warning_time_l">
            <property name="text">
-            <string>Interval (s)</string>
+            <string>Early warning time (s) (0 = off)</string>
            </property>
           </widget>
          </item>
-         <item row="3" column="3">
-          <widget class="QSlider" name="volume">
+         <item row="1" column="5">
+          <widget class="QLabel" name="switch_volume_l">
+           <property name="text">
+            <string>Volume</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="3">
+          <widget class="QSpinBox" name="interval">
+           <property name="minimum">
+            <number>6</number>
+           </property>
+           <property name="maximum">
+            <number>100000</number>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="7">
+          <widget class="QSlider" name="warning_volume">
            <property name="maximum">
             <number>100</number>
            </property>
@@ -109,37 +96,67 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="4">
-          <widget class="QLabel" name="logo_l">
-           <property name="text">
-            <string/>
-           </property>
-           <property name="pixmap">
-            <pixmap resource="resources.qrc">:/bask-drinker-128.png</pixmap>
-           </property>
-           <property name="scaledContents">
-            <bool>false</bool>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="1">
-          <widget class="QLabel" name="volume_l">
+         <item row="2" column="5">
+          <widget class="QLabel" name="warning_volume_l">
            <property name="text">
             <string>Volume</string>
            </property>
           </widget>
          </item>
-         <item row="2" column="4">
-          <widget class="QCheckBox" name="repeat_warning">
+         <item row="1" column="1">
+          <widget class="QLabel" name="interval_l">
            <property name="text">
-            <string>Repeat warning</string>
+            <string>Interval (s)</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="7">
+          <widget class="QSlider" name="switch_volume">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="9">
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="0" column="7">
+          <widget class="QLabel" name="timer_l">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
            </property>
           </widget>
          </item>
         </layout>
+       </item>
+       <item>
+        <widget class="QLabel" name="logo_l">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="pixmap">
+          <pixmap resource="resources.qrc">:/bask-drinker-128.png</pixmap>
+         </property>
+         <property name="scaledContents">
+          <bool>false</bool>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
