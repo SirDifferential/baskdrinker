@@ -3,11 +3,15 @@
 # Loathsome Bask Drinker
 ## Turn manager for Drunk Souls
 
-Makes sound effects whenever a timer expires to notify the next player is in turn.
+Software used to control play turns in live gaming sessions with multiple people. This program is especially designed for the From Sofware catalogue.
+
+Th program allows setting turn durations in seconds, and makes sound effects whenever a timer expires to notify the next player is in turn. Also has the option to give an early warning so people don't need to panic.
 
 # Connectivity
 
-A websocket server can be hosted in localhost. All connections are done in JSON. The "API" to it is below:
+The program can host a websocket server in localhost to send notifications to your client of choice. This can be useful with software such as [Loathsome Pad Swapper](https://github.com/Sonicus/loathsome-pad-swapper) if you wish to dynamically change the gamepad currently sending input to your game of choice.
+
+All communications are done in JSON. The "API" to it is below.
 
 ### Hello
 
