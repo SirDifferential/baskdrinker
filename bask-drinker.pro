@@ -1,18 +1,22 @@
-QT       += core gui multimedia
+QT       += core gui multimedia websockets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-CONFIG += c++17
+CONFIG += c++17 force_debug_info
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    baskclient.cpp \
+    baskserver.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
+    baskclient.h \
+    baskserver.h \
     mainwindow.h
 
 FORMS += \

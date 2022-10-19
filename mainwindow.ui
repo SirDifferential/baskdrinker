@@ -28,51 +28,10 @@
       <layout class="QHBoxLayout" name="horizontalLayout_4">
        <item>
         <layout class="QGridLayout" name="control_layout">
-         <item row="2" column="3">
-          <widget class="QSpinBox" name="warning_time">
-           <property name="maximum">
-            <number>120</number>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QPushButton" name="runbutton">
-           <property name="text">
-            <string>START</string>
-           </property>
-          </widget>
-         </item>
          <item row="2" column="8">
           <widget class="QCheckBox" name="repeat_warning">
            <property name="text">
             <string>Repeat</string>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="3">
-          <spacer name="verticalSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="2" column="1">
-          <widget class="QLabel" name="warning_time_l">
-           <property name="text">
-            <string>Early warning time (s) (0 = off)</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="5">
-          <widget class="QLabel" name="switch_volume_l">
-           <property name="text">
-            <string>Volume</string>
            </property>
           </widget>
          </item>
@@ -85,6 +44,19 @@
             <number>100000</number>
            </property>
           </widget>
+         </item>
+         <item row="7" column="3">
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
          </item>
          <item row="2" column="7">
           <widget class="QSlider" name="warning_volume">
@@ -103,17 +75,24 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="1">
-          <widget class="QLabel" name="interval_l">
-           <property name="text">
-            <string>Interval (s)</string>
-           </property>
-          </widget>
-         </item>
          <item row="1" column="7">
           <widget class="QSlider" name="switch_volume">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QLabel" name="warning_time_l">
+           <property name="text">
+            <string>Early warning time (s) (0 = off)</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="3">
+          <widget class="QSpinBox" name="warning_time">
+           <property name="maximum">
+            <number>120</number>
            </property>
           </widget>
          </item>
@@ -130,6 +109,13 @@
            </property>
           </spacer>
          </item>
+         <item row="0" column="1">
+          <widget class="QPushButton" name="runbutton">
+           <property name="text">
+            <string>START</string>
+           </property>
+          </widget>
+         </item>
          <item row="0" column="7">
           <widget class="QLabel" name="timer_l">
            <property name="text">
@@ -137,6 +123,58 @@
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="5">
+          <widget class="QLabel" name="switch_volume_l">
+           <property name="text">
+            <string>Volume</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLabel" name="interval_l">
+           <property name="text">
+            <string>Interval (s)</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QLabel" name="ws_server_port_l">
+           <property name="text">
+            <string>Websocket server port</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="3">
+          <widget class="QSpinBox" name="websocket_port">
+           <property name="maximum">
+            <number>65535</number>
+           </property>
+           <property name="value">
+            <number>10666</number>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="5">
+          <widget class="QPushButton" name="start_ws_server">
+           <property name="text">
+            <string>Start server</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="7">
+          <widget class="QLabel" name="ws_server_state_l">
+           <property name="text">
+            <string>Websocket server not running</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="8">
+          <widget class="QLabel" name="ws_clients_label">
+           <property name="text">
+            <string>Clients: 0</string>
            </property>
           </widget>
          </item>

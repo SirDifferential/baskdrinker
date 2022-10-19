@@ -7,6 +7,7 @@
 #include <QMediaPlayer>
 #include <QAudioOutput>
 #include <QRandomGenerator>
+#include "baskserver.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -30,7 +31,6 @@ protected:
     QStringList getWarningSFX();
 private slots:
     void on_runbutton_clicked();
-    void on_timer_interval();
     void on_interval_valueChanged(int arg1);
     void on_warning_time_valueChanged(int arg1);
     void on_load_switch_sfx_button_clicked();
@@ -41,10 +41,15 @@ private slots:
     void on_remove_warning_sfx_button_clicked();
     void on_repeat_warning_toggled(bool checked);
     void on_switch_volume_valueChanged(int value);
-    void on_warning_volume_valueChanged(int value);
+    void on_warning_volume_valueChanged(int value);    
+    void on_websocket_port_valueChanged(int arg1);
+    void on_start_ws_server_clicked();
 public slots:
     void positionChangedSwitch(qint64);
     void positionChangedWarning(qint64);
+    void onTimerInterval();
+    void onWSClientsChanged(int);
+    void onWSStateChanged(bool, QString);
 private:
     Ui::MainWindow *ui;
     bool m_running;
@@ -61,5 +66,6 @@ private:
     QAudioOutput* m_audio_switch;
     QAudioOutput* m_audio_warning;
     QRandomGenerator* m_rand;
+    BaskServer* m_server;
 };
 #endif // MAINWINDOW_H

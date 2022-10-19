@@ -17,10 +17,13 @@ MainWindow::MainWindow(QWidget *parent)
     m_running = false;
     m_timer = new QTimer(this);
     m_timer->setInterval(100);
-    connect(m_timer, &QTimer::timeout, this, &MainWindow::on_timer_interval);
+    connect(m_timer, &QTimer::timeout, this, &MainWindow::onTimerInterval);
     m_interval_s = ui->interval->value();
     m_warning_time_s = ui->warning_time->value();
     m_warned = false;
+    m_server = new BaskServer(this);
+    connect(m_server, &BaskServer::clientsChanged, this, &MainWindow::onWSClientsChanged);
+    connect(m_server, &BaskServer::stateChanged, this, &MainWindow::onWSStateChanged);
 
     QSettings settings;
     QStringList sfx_switch_list = settings.value("switch_sfx_list").toStringList();
@@ -66,11 +69,15 @@ MainWindow::MainWindow(QWidget *parent)
     ui->switch_volume->setValue(m_volume_switch);
     ui->warning_volume->setValue(m_volume_warning);
 
+    int port = settings.value("websocket_port", 10666).toInt();
+    ui->websocket_port->setValue(port);
+    m_server->setPort(port);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+    ui = nullptr;
 }
 
 void MainWindow::positionChangedSwitch(qint64 pos) {
@@ -165,7 +172,7 @@ void MainWindow::doWarning() {
     m_warned = true;
 }
 
-void MainWindow::on_timer_interval() {
+void MainWindow::onTimerInterval() {
     int64_t secs_since = m_elapsed_timer.nsecsElapsed() / 1000000000LL;
     int64_t t = m_interval_s - secs_since;
 
@@ -367,4 +374,43 @@ void MainWindow::on_warning_volume_valueChanged(int value)
     QSettings settings;
     settings.setValue("volume_warning", value);
     m_audio_warning->setVolume(value / 100.0f);
+}
+
+void MainWindow::on_websocket_port_valueChanged(int arg)
+{
+    QSettings settings;
+    settings.setValue("websocket_port", arg);
+    m_server->setPort(arg);
+}
+
+void MainWindow::on_start_ws_server_clicked()
+{
+    if (m_server->isRunning()) {
+        m_server->stop();
+    } else {
+        if (!m_server->init()) {
+            return;
+        }
+    }
+}
+
+void MainWindow::onWSClientsChanged(int arg) {
+    if (!ui) {
+        return;
+    }
+    ui->ws_clients_label->setText("Clients: " + QString::number(arg));
+}
+
+void MainWindow::onWSStateChanged(bool arg, QString details) {
+
+    if (!ui) {
+        return;
+    }
+
+    if (arg) {
+        ui->start_ws_server->setText("Stop server");
+    } else {
+        ui->start_ws_server->setText("Start server");
+    }
+    ui->ws_server_state_l->setText(details);
 }
