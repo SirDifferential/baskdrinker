@@ -9,7 +9,7 @@ The program allows setting turn durations in seconds, and makes sound effects wh
 
 # Building
 
-* Install a compiler of your choice
+* Install a C++ compiler of your choice
 * Install [Qt](https://www.qt.io/). You need the following "additional libraries" in the installer:
 	* Qt Multimedia
 	* Qt Websockets
