@@ -103,6 +103,17 @@ void BaskServer::handleInvalidMessage(BaskClient* cl, WSErrorCode code, const QS
     qDebug() << "sent error string: " << strJson;
 }
 
+void BaskServer::replyGeneric(BaskClient* cl, QString msgType) {
+
+    QJsonObject obj;
+    obj["msgType"] = msgType;
+
+    QJsonDocument doc(obj);
+    QString strJson = doc.toJson(QJsonDocument::Compact);
+
+    cl->m_socket->sendTextMessage(strJson);
+}
+
 QString valTypeToString(QJsonValue::Type val) {
     switch (val) {
     case QJsonValue::Null: return "null";
@@ -130,26 +141,32 @@ QString ensureField(const QJsonObject& obj, QString field, QJsonValue::Type t) {
         if (!obj[field].isNull()) {
             return "Invalid type: expected: null, got: " + valTypeToString(obj[field].type());
         }
+        break;
     case QJsonValue::Bool:
         if (!obj[field].isBool()) {
             return "Invalid type: expected: bool, got: " + valTypeToString(obj[field].type());
         }
+        break;
     case QJsonValue::Double:
         if (!obj[field].isDouble()) {
             return "Invalid type: expected: double, got: " + valTypeToString(obj[field].type());
         }
+        break;
     case QJsonValue::String:
         if (!obj[field].isString()) {
             return "Invalid type: expected: string, got: " + valTypeToString(obj[field].type());
         }
+        break;
     case QJsonValue::Array:
         if (!obj[field].isArray()) {
             return "Invalid type: expected: array, got: " + valTypeToString(obj[field].type());
         }
+        break;
     case QJsonValue::Object:
         if (!obj[field].isObject()) {
             return "Invalid type: expected: object, got: " + valTypeToString(obj[field].type());
         }
+        break;
     default:
         break;
     }
@@ -185,13 +202,13 @@ void BaskServer::processTextMessage(QString message) {
         return;
     }
 
-    QString err = ensureField(obj, "msg_type", QJsonValue::String);
+    QString err = ensureField(obj, "msgType", QJsonValue::String);
     if (!err.isEmpty()) {
         handleInvalidMessage(cl, WSErrorCode::INVALID_PARAM, err);
         return;
     }
 
-    QString msgtype = obj["msg_type"].toString();
+    QString msgtype = obj["msgType"].toString();
 
     if (msgtype == "hello") {
 
@@ -204,6 +221,7 @@ void BaskServer::processTextMessage(QString message) {
         QString name = obj["name"].toString();
         cl->m_name = name;
         qDebug() << "got hello from client: " << name;
+        replyGeneric(cl, "welcome");
     } else if (msgtype == "subscribe") {
 
         QString err = ensureField(obj, "topic", QJsonValue::String);
@@ -215,6 +233,7 @@ void BaskServer::processTextMessage(QString message) {
         QString topic = obj["topic"].toString();
         cl->m_subscriptions.push_back(topic);
         qDebug() << "client: " << cl->m_name << " subscribed to: " << topic;
+        replyGeneric(cl, "subscribed");
     } else if (msgtype == "unsubscribe") {
 
         QString err = ensureField(obj, "topic", QJsonValue::String);
@@ -229,7 +248,7 @@ void BaskServer::processTextMessage(QString message) {
         });
 
         cl->m_subscriptions.erase(to_erase, cl->m_subscriptions.end());
-
+        replyGeneric(cl, "unsubscribed");
         qDebug() << "client: " << cl->m_name << " unsubscribed from: " << topic;
     } else {
         qDebug() << "not handling message of type: " << msgtype;

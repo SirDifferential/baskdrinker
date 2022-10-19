@@ -151,9 +151,15 @@ void MainWindow::nextPlayer() {
         m_player_switch->setSource(QUrl::fromLocalFile(sfx));
         m_player_switch->play();
     }
+
+    QJsonObject obj;
+    obj["msgType"] = "nextPlayer";
+    QJsonDocument doc(obj);
+    QString strJson = doc.toJson(QJsonDocument::Compact);
+    m_server->publish("nextPlayer", strJson);
 }
 
-void MainWindow::doWarning() {
+void MainWindow::doWarning(int seconds) {
 
     QStringList sfx_list = getWarningSFX();
 
@@ -170,6 +176,13 @@ void MainWindow::doWarning() {
     }
 
     m_warned = true;
+
+    QJsonObject obj;
+    obj["msgType"] = "warning";
+    obj["timeUntilNextPlayerSeconds"] = seconds;
+    QJsonDocument doc(obj);
+    QString strJson = doc.toJson(QJsonDocument::Compact);
+    m_server->publish("warning", strJson);
 }
 
 void MainWindow::onTimerInterval() {
@@ -180,7 +193,7 @@ void MainWindow::onTimerInterval() {
     if (t <= m_warning_time_s && m_warning_time_s > 0) {
         soon = true;
         if (!m_warned) {
-            doWarning();
+            doWarning(t);
         }
     }
 

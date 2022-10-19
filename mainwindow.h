@@ -23,7 +23,7 @@ public:
 
 protected:
     void nextPlayer();
-    void doWarning();
+    void doWarning(int seconds);
     void reset();
     void persist_switch_sfx();
     void persist_warning_sfx();

@@ -48,6 +48,11 @@ public:
     void handleInvalidMessage(BaskClient* cl, WSErrorCode code, const QString& errorMsg);
 
     /**
+     * Sends a generic message to the client with the given message type
+     */
+    void replyGeneric(BaskClient* cl, QString msgType);
+
+    /**
      * Assigns the port to use when hosting a server. Does not change the port before the
      * server is restarted.
      */
