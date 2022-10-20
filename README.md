@@ -11,6 +11,11 @@ The program allows setting turn durations in seconds, and makes sound effects wh
 
 See [latest release](https://github.com/SirDifferential/baskdrinker/releases)
 
+# Hints
+
+* Ctrl + Alt + Space is a global hotkey for controlling the timer start/stop button
+* Hotkeys can have audio loaded for them at the bottom of the window
+
 # Building
 
 * Install a C++ compiler of your choice
