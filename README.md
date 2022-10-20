@@ -7,6 +7,10 @@ Software used to control play turns in live gaming sessions with multiple people
 
 The program allows setting turn durations in seconds, and makes sound effects whenever a timer expires to notify the next player is in turn. Also has the option to give an early warning so people don't need to panic.
 
+# Downloads
+
+See [latest release](https://github.com/SirDifferential/baskdrinker/releases)
+
 # Building
 
 * Install a C++ compiler of your choice
