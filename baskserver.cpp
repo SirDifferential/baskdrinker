@@ -52,7 +52,6 @@ int BaskServer::getClientCount() {
 
 void BaskServer::stop() {
     // might not be sent before server closes
-    publish("connection_close", "server closing normally");
     m_clients.clear();
     m_webSocketServer->close();
 
@@ -281,7 +280,6 @@ void BaskServer::socketDisconnected() {
 }
 
 void BaskServer::publish(const QString& msgType, const QString& msg) {
-
     for (auto& iter : m_clients) {
         auto i = std::find(iter->m_subscriptions.begin(), iter->m_subscriptions.end(), msgType);
         if (i == iter->m_subscriptions.end()) {
