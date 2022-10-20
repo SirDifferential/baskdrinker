@@ -3,6 +3,7 @@ QT       += core gui multimedia websockets
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++17 force_debug_info
+DEFINES += BASK_VERSION=\"\\\"1.11\\\"\"
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.

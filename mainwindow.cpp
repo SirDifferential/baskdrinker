@@ -14,6 +14,8 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    QString app_title = QString("Loathsome Bäsk Drinker v") + QString(BASK_VERSION);
+    setWindowTitle(app_title);
     m_running = false;
     m_timer = new QTimer(this);
     m_timer->setInterval(100);
