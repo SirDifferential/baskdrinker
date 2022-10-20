@@ -8,8 +8,6 @@ BaskServer::BaskServer(QObject *parent) : QObject{parent} {
 }
 
 BaskServer::~BaskServer() {
-    emit stateChanged(false, "Server not running");
-
     qDebug() << "Closing server in dtor";
     m_webSocketServer->close();
 

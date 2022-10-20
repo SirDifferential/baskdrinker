@@ -4,5 +4,7 @@
     </qresource>
     <qresource prefix="/">
         <file>bask-drinker-128.png</file>
+        <file>sfx_boring/hotkey/hotkey_off.wav</file>
+        <file>sfx_boring/hotkey/hotkey_on.wav</file>
     </qresource>
 </RCC>

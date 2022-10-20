@@ -12,12 +12,14 @@ DEFINES += BASK_VERSION=\"\\\"1.11\\\"\"
 SOURCES += \
     baskclient.cpp \
     baskserver.cpp \
+    keyboardhandler.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
     baskclient.h \
     baskserver.h \
+    keyboardhandler.h \
     mainwindow.h
 
 FORMS += \
@@ -35,3 +37,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     resources.qrc
+
+win32: {
+    LIBS += -luser32
+}

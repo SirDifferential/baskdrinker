@@ -14,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
     QString app_title = QString("Loathsome Bäsk Drinker v") + QString(BASK_VERSION);
     setWindowTitle(app_title);
     m_running = false;
@@ -50,11 +51,15 @@ MainWindow::MainWindow(QWidget *parent)
 
     m_player_switch = new QMediaPlayer();
     m_player_warning = new QMediaPlayer();
+    m_player_hotkey = new QMediaPlayer();
     m_audio_switch = new QAudioOutput();
     m_audio_warning = new QAudioOutput();
+    m_audio_hotkey = new QAudioOutput();
 
     m_player_switch->setAudioOutput(m_audio_switch);
     m_player_warning->setAudioOutput(m_audio_warning);
+    m_player_hotkey->setAudioOutput(m_audio_hotkey);
+
     connect(m_player_switch, SIGNAL(positionChanged(qint64)), this, SLOT(positionChangedSwitch(qint64)));
     connect(m_player_warning, SIGNAL(positionChanged(qint64)), this, SLOT(positionChangedWarning(qint64)));
 
@@ -74,6 +79,12 @@ MainWindow::MainWindow(QWidget *parent)
     int port = settings.value("websocket_port", 10666).toInt();
     ui->websocket_port->setValue(port);
     m_server->setPort(port);
+
+    m_kb = new KeyboardHandler(this);
+    connect(m_kb, &KeyboardHandler::hotkey1Pressed, this, &MainWindow::handleHotkey1);
+
+    hotkey1_on_sfx = settings.value("hotkey1_on_sfx", "").toString();
+    hotkey1_off_sfx = settings.value("hotkey1_off_sfx", "").toString();
 }
 
 MainWindow::~MainWindow()
@@ -98,6 +109,7 @@ void MainWindow::on_runbutton_clicked()
     } else {
         m_running = false;
         ui->runbutton->setText("START");
+        ui->timer_l->setText("");
         m_timer->stop();
         m_player_warning->stop();
         m_player_switch->stop();
@@ -428,4 +440,69 @@ void MainWindow::onWSStateChanged(bool arg, QString details) {
         ui->start_ws_server->setText("Start server");
     }
     ui->ws_server_state_l->setText(details);
+}
+
+void MainWindow::handleHotkey1() {
+    qDebug() << "received hotkey 1";
+    on_runbutton_clicked();
+
+    if (m_running && !hotkey1_on_sfx.isEmpty()) {
+        m_player_hotkey->setSource(QUrl::fromLocalFile(hotkey1_on_sfx));
+        m_player_hotkey->play();
+    } else if (!m_running && !hotkey1_off_sfx.isEmpty()) {
+        m_player_hotkey->setSource(QUrl::fromLocalFile(hotkey1_off_sfx));
+        m_player_hotkey->play();
+    }
+}
+
+QString MainWindow::getHotkeySfx() {
+
+    QSettings settings;
+    QFileDialog d(this);
+
+    d.setFileMode(QFileDialog::ExistingFile);
+    d.setNameFilter(tr("Audio files (*.wav *.mp3 *.ogg *.flac)"));
+    d.setViewMode(QFileDialog::Detail);
+
+    QString p = settings.value("last_hotkey_sfx_dir", QDir::homePath()).toString();
+
+    d.setDirectory(p);
+    QStringList files;
+
+    QStringList items = getWarningSFX();
+
+    QString sfx;
+    if (d.exec()) {
+
+        QString lastDir;
+
+        files = d.selectedFiles();
+        if (files.size() > 1) {
+            qDebug() << "more than 1 sfx picked for hotkey 1 on";
+            return sfx;
+        }
+
+        sfx = files[0];
+        lastDir = QFileInfo(sfx).absoluteDir().absolutePath();
+        settings.setValue("last_hotkey_sfx_dir", lastDir);
+    }
+
+    return sfx;
+}
+
+void MainWindow::on_hotkey1_fsx_on_button_clicked()
+{
+    QString sfx = getHotkeySfx();
+    QSettings settings;
+    settings.setValue("hotkey1_on_sfx", sfx);
+    hotkey1_on_sfx = sfx;
+}
+
+
+void MainWindow::on_hotkey1_fsx_off_button_clicked()
+{
+    QString sfx = getHotkeySfx();
+    QSettings settings;
+    settings.setValue("hotkey1_off_sfx", sfx);
+    hotkey1_off_sfx = sfx;
 }
