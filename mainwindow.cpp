@@ -443,7 +443,6 @@ void MainWindow::onWSStateChanged(bool arg, QString details) {
 }
 
 void MainWindow::handleHotkey1() {
-    qDebug() << "received hotkey 1";
     on_runbutton_clicked();
 
     if (m_running && !hotkey1_on_sfx.isEmpty()) {

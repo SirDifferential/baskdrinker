@@ -76,5 +76,7 @@ private:
     KeyboardHandler* m_kb;
     QString hotkey1_on_sfx;
     QString hotkey1_off_sfx;
+
+
 };
 #endif // MAINWINDOW_H

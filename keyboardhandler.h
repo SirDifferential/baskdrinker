@@ -18,6 +18,11 @@ public:
 private:
     QTimer m_timer;
     QElapsedTimer m_event_sent;
+#ifdef WIN32
+    SHORT m_hotkey1;
+    SHORT m_hotkey2;
+    SHORT m_hotkey3;
+#endif
 public slots:
     void trackActions();
 signals:
